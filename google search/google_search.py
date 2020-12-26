@@ -11,19 +11,21 @@ import pycountry
 import time
 import matplotlib.pyplot as plt
 import numpy as np
-startTime = time.time()
+
 pytrend = TrendReq(hl='en-GB', tz=360)
-
-
 colnames = ["keywords"]
+
+""" list of keywords ( max. 5) """
 df2 = ['coronavirus','short breath','covid-19']
+
+
 
 """ Conditioning covid dataset"""
 covid =pd.read_csv("all-states-history.csv")
 covid['date']=covid['date'].astype('datetime64[ns]')
 covid = covid[['date','positive','positiveIncrease','negative','negativeIncrease','state']]
 
-
+""" Creating dictionary of us code. Some regions aren't included """
 xd = list(pycountry.subdivisions.get(country_code='US'))
 list_subdivision = []
 for i in range(len(xd)):
@@ -33,8 +35,7 @@ outlying_area = ['US-PR','US-GU','US-AS','US-MP','US-VI','US-UM']
 for x in outlying_area:
     list_subdivision.remove(x)
 
-list1=list_subdivision[0:2]
-list2= list_subdivision[44:51]
+
 
 for y in list_subdivision:
     dataset = []
