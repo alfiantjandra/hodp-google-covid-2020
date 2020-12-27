@@ -16,7 +16,7 @@ pytrend = TrendReq(hl='en-GB', tz=360)
 colnames = ["keywords"]
 
 """ list of keywords ( max. 5) """
-df2 = ['coronavirus','short breath','covid-19']
+df2 = ['coronavirus']
 
 
 
@@ -36,6 +36,7 @@ for x in outlying_area:
     list_subdivision.remove(x)
 
 
+# list_subdivision = ['US-NV']
 
 for y in list_subdivision:
     dataset = []
@@ -44,7 +45,7 @@ for y in list_subdivision:
           pytrend.build_payload(
           kw_list=keywords,
           cat=0,
-          timeframe='2020-02-01 2020-12-18',
+          timeframe='today 3-m',
           geo=y)
           data = pytrend.interest_over_time()
           if not data.empty:
@@ -53,21 +54,22 @@ for y in list_subdivision:
     
 
     result = pd.concat(dataset, axis=1)
-    result = result.assign(state =y[3]+y[4])    
+    # result = result.assign(state =y[3]+y[4])
+    # result.drop('state',inplace=True,axis=1)  
+    result.columns = [y[3]+y[4]]
     if list_subdivision.index(y) == 0:
         result1 = result
     else:
-        result1 = result1.append(result)
-    time.sleep(2)
+        result1 = pd.concat([result1,result],axis=1)
+    time.sleep(1)
 
 
-final_result = result1.merge(covid,on = ["date","state"])   
+# final_result = result1.merge(covid,on = ["date"])   
         
   
-final_result.to_csv("dataset.csv")
-
-plt.plot(final_result['coronavirus'])
-plt.show()
+# final_result.to_csv("dataset.csv")
+result1 = result1.div(100)
+result1.to_csv("state_coronavirus.csv")
               
 
 
