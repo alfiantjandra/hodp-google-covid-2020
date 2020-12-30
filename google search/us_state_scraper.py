@@ -9,8 +9,7 @@ from pytrends.request import TrendReq
 import pandas as pd
 import pycountry
 import time
-import matplotlib.pyplot as plt
-import numpy as np
+
 
 pytrend = TrendReq(hl='en-GB', tz=360)
 colnames = ["keywords"]
@@ -18,12 +17,6 @@ colnames = ["keywords"]
 """ list of keywords ( max. 5) """
 df2 = ['coronavirus']
 
-
-
-""" Conditioning covid dataset"""
-covid =pd.read_csv("all-states-history.csv")
-covid['date']=covid['date'].astype('datetime64[ns]')
-covid = covid[['date','positive','positiveIncrease','negative','negativeIncrease','state']]
 
 """ Creating dictionary of us code. Some regions aren't included """
 xd = list(pycountry.subdivisions.get(country_code='US'))
@@ -36,8 +29,7 @@ for x in outlying_area:
     list_subdivision.remove(x)
 
 
-# list_subdivision = ['US-NV']
-
+''' Scrape data and format into a single dataset; output: final_result '''
 for y in list_subdivision:
     dataset = []
     for x in range(0,len(df2)):
@@ -54,24 +46,15 @@ for y in list_subdivision:
     
 
     result = pd.concat(dataset, axis=1)
-    # result = result.assign(state =y[3]+y[4])
-    # result.drop('state',inplace=True,axis=1)  
     result.columns = [y[3]+y[4]]
     if list_subdivision.index(y) == 0:
-        result1 = result
+        final_result = result
     else:
-        result1 = pd.concat([result1,result],axis=1)
+        final_result = pd.concat([final_result,result],axis=1)
     time.sleep(1)
 
 
-# final_result = result1.merge(covid,on = ["date"])   
-        
-  
-# final_result.to_csv("dataset.csv")
-result1 = result1.div(100)
-result1.to_csv("state_coronavirus.csv")
+final_result = final_result.div(100)
+final_result.to_csv("state_coronavirus.csv")
               
 
-
-# executionTime = (time.time() - startTime)
-# print('Execution time in sec.: ' + str(executionTime))
