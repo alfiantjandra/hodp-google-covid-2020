@@ -16,7 +16,7 @@ for word in keywords:
     df_rsv = pd.read_csv(f"US_google_trends/{word}.csv", index_col="date")
     df = pd.concat([df, df_rsv], axis=1)
     plt.figure(figsize=(10, 7.5))
-    sns.regplot(x=word, y="cases", data=df, color='#C63F3F', scatter_kws={'s': 8})  # ci=None
+    sns.regplot(x=word, y="cases", data=df, color='#C63F3F', scatter_kws={'s': 12})  # ci=None
     plt.ylabel("Increase in cases, thousands")
     plt.xlabel(f"{word} RSV")
     plt.ylim(0, 310)
@@ -27,6 +27,7 @@ for word in keywords:
     plt.show()
 
 print(df.corr())
+
 
 def df_shifted(df, target=None, lag=0):
     if not lag and not target:
