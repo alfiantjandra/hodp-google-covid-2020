@@ -14,7 +14,7 @@ pytrend = TrendReq(hl='en-GB', tz=360)
 colnames = ["keywords"]
 
 """ list of keywords ( max. 5) """
-df2 = ['coronavirus']
+df2 = ['loss of taste']
 
 
 """ Area to be scraped """
@@ -28,7 +28,7 @@ for y in list_subdivision:
           pytrend.build_payload(
           kw_list=keywords,
           cat=0,
-          timeframe='today 3-m',
+          timeframe='2020-09-30 2020-12-28',
           geo=y)
           data = pytrend.interest_over_time()
           if not data.empty:
@@ -45,6 +45,6 @@ for y in list_subdivision:
 
 
 final_result = final_result.div(100)
-final_result.to_csv("us_coronavirus.csv")
+final_result.to_csv("../US_google_trends/loss of taste.csv")
               
 

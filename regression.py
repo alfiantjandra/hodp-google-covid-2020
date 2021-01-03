@@ -11,14 +11,17 @@ mask = (df['date'] > '2020-09-29') & (df['date'] <= '2020-12-28')
 df = df.loc[mask]
 df.set_index('date', inplace=True)
 
-keywords = ["coronavirus"]
+keywords = ["covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing", "loss of taste",
+            "quarantine", "coronavirus"]
 for word in keywords:
-    df_rsv = pd.read_csv(f"google/us_{word}.csv", index_col="date")
+    df_rsv = pd.read_csv(f"US_google_trends/{word}.csv", index_col="date")
     df = pd.concat([df, df_rsv], axis=1)
+    sns.regplot(x=word, y="cases", data=df)  # ci=None
+    plt.ylabel("Cases")
+    plt.xlabel(f"{word} RSV")
+    plt.show()
 
 print(df.iloc[15: -15].corr())
-sns.regplot(x="coronavirus", y="cases", data=df)  # ci=None
-plt.show()
 
 
 def df_shifted(df, target=None, lag=0):
