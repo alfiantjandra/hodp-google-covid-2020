@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
 import seaborn as sns
 
 df = pd.read_csv("covid_data/us_increase.csv")
@@ -16,15 +15,18 @@ keywords = ["loss of taste", "covid symptoms", "loss of smell", "face mask", "co
 for word in keywords:
     df_rsv = pd.read_csv(f"US_google_trends/{word}.csv", index_col="date")
     df = pd.concat([df, df_rsv], axis=1)
+    plt.figure(figsize=(10, 7.5))
     sns.regplot(x=word, y="cases", data=df, color='#C63F3F', scatter_kws={'s': 8})  # ci=None
-    plt.ylabel("Cases (in thousands)")
+    plt.ylabel("Increase in cases, thousands")
     plt.xlabel(f"{word} RSV")
     plt.ylim(0, 310)
     plt.yticks(np.arange(50, 301, step=50))
+    plt.text(0.95, 285, f"R = {df.corr().loc['cases', word]:.2f}", fontsize=18,
+             bbox={'facecolor': 'white', 'alpha': 0.5, 'pad': 10},
+             horizontalalignment='right')
     plt.show()
 
 print(df.corr())
-
 
 def df_shifted(df, target=None, lag=0):
     if not lag and not target:
@@ -50,13 +52,5 @@ for word in keywords:
     plt.xlabel("Lag/Lead")
     # plt.yticks(np.arange(0.25, 1.01, step=0.25)) perhaps use consistent ticks
     x, y = zip(*points)
-    plt.title(f"{word.title()}, max: {max(y)}")
+    plt.title(f"{word.title()}, max: {max(y):.3f}")
     plt.show()
-
-# X = df["coronavirus"].to_numpy().reshape((-1, 1))
-# y = df["cases"].to_numpy()
-#
-# model = LinearRegression().fit(X, y)
-# print("correlation: ", np.sqrt(model.score(X, y)))
-# print("intercept: ", model.intercept_)
-# print("slope: ", model.coef_)
