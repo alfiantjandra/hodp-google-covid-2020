@@ -10,15 +10,17 @@ df['date'] = pd.to_datetime(df['date'])
 mask = (df['date'] > '2020-09-29') & (df['date'] <= '2020-12-28')
 df = df.loc[mask]
 df.set_index('date', inplace=True)
+df['cases'] = df['cases'].div(1000000) # cases in millions
 
-keywords = ["covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing", "loss of taste",
-            "quarantine", "coronavirus"]
+keywords = ["loss of taste", "covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing"]
 for word in keywords:
     df_rsv = pd.read_csv(f"US_google_trends/{word}.csv", index_col="date")
     df = pd.concat([df, df_rsv], axis=1)
-    sns.regplot(x=word, y="cases", data=df)  # ci=None
-    plt.ylabel("Cases")
+    sns.regplot(x=word, y="cases", data=df, color='#C63F3F', scatter_kws={'s': 8})  # ci=None
+    plt.ylabel("Cases (in millions)")
     plt.xlabel(f"{word} RSV")
+    plt.ylim(5, 21)
+    plt.yticks(np.arange(6, 21, step=2))
     plt.show()
 
 print(df.iloc[15: -15].corr())
@@ -42,9 +44,11 @@ for word in keywords:
         new_df = df_shifted(df, 'cases', lag=i)
         points.append((i, new_df.iloc[15: -15].corr().loc['cases', word]))
 
-    plt.plot(*zip(*points))
+    plt.figure(figsize=(6, 2))
+    plt.plot(*zip(*points), color='r')
     plt.ylabel("Correlation")
     plt.xlabel("Lag/Lead")
+    # plt.yticks(np.arange(0.25, 1.01, step=0.25)) perhaps use consistent ticks
     plt.title(word.title())
     plt.show()
 

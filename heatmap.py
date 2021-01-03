@@ -13,7 +13,7 @@ state_df = pd.DataFrame(data=d)
 fig = px.choropleth(state_df,  # Input pandas DataFrame
                     locations="states",  # DataFrame column with locations
                     color="r-value",  # DataFrame column with values
-                    color_continuous_scale=['#760000', '#C63F3F', '#E28073', '#F1D3CF'],
+                    color_continuous_scale=['#760000', '#F1D3CF'],
                     # hover_name="states",
                     hover_data={"states": False, "r-value": True},
                     locationmode="USA-states")
