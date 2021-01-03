@@ -19,11 +19,11 @@ for word in keywords:
     sns.regplot(x=word, y="cases", data=df, color='#C63F3F', scatter_kws={'s': 8})  # ci=None
     plt.ylabel("Cases (in thousands)")
     plt.xlabel(f"{word} RSV")
-    plt.ylim(0, 305)
+    plt.ylim(0, 310)
     plt.yticks(np.arange(50, 301, step=50))
     plt.show()
 
-print(df.iloc[15: -15].corr())
+print(df.corr())
 
 
 def df_shifted(df, target=None, lag=0):
@@ -42,9 +42,9 @@ for word in keywords:
     points = []
     for i in range(-14, 15):
         new_df = df_shifted(df, 'cases', lag=i)
-        points.append((i, new_df.iloc[15: -15].corr().loc['cases', word]))
+        points.append((i, new_df.corr().loc['cases', word]))
 
-    plt.figure(figsize=(6, 2))
+    plt.figure(figsize=(6, 3))
     plt.plot(*zip(*points), color='r')
     plt.ylabel("Correlation")
     plt.xlabel("Lag/Lead")
