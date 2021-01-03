@@ -90,7 +90,7 @@ df['state'].replace(us_state_abbrev,inplace=True)
 df = df.drop(columns = ['fips'])
 
 
-df.to_csv("us_states.csv", index = False)
-df_us.to_csv("us.csv",index=False)
+df.to_csv("us_states_cases.csv", index = False)
+df_us.to_csv("us_cases.csv",index=False)
 
 
