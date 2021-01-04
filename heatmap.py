@@ -2,11 +2,11 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 
-d = {"states": ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
+d = {"states": ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "GU",
           "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
           "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-          "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-          "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"], "r-value": np.random.rand(51)}
+          "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "PR", "RI", "SC",
+          "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"], "r-value": np.random.rand(53)}
 
 state_df = pd.DataFrame(data=d)
 
