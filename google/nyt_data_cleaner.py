@@ -70,6 +70,7 @@ us_state_abbrev = {
 }
 
 us_state_values = list(us_state_abbrev.values())
+us_state_values.remove('AS')
 
 
 df = pd.read_csv("../covid_data/us_states_total.csv")
@@ -91,22 +92,36 @@ states = list(set(df['state']))
 df['state'].replace(us_state_abbrev,inplace=True)
 df = df.drop(columns = ['fips'])
 
-'''asfasdf'''
+
+
 new_df = pd.DataFrame()
 for state in us_state_values:
-    temp_df = df[df['state'] == state]
-    temp_df.index = pd.to_datetime(temp_df['date'])
-
-    temp_df = temp_df.rename(columns = {"cases": state})
-    temp_df = temp_df.drop(columns= ['date','state','deaths'])
-    
-    
-    new_df = pd.concat([new_df,temp_df],axis=1)
-    
+        temp_df = df[df['state'] == state]
+        temp_df.index = pd.to_datetime(temp_df['date'])
     
 
+        
+        
+        '''Convert into increase, remove top row'''
+        temp_df['increase'] = temp_df["cases"].diff()
+        temp_df = temp_df.drop(pd.to_datetime('2020-09-29'))
+        
+        temp_df = temp_df.drop(columns= ['cases','date','state','deaths'])
+        temp_df = temp_df.rename(columns = {"increase": state})
+        
+        new_df = pd.concat([new_df,temp_df],axis=1)
 
-# df.to_csv("us_states_cases.csv", index = False)
-# df_us.to_csv("us_cases.csv",index=False)
+new_df = new_df.reset_index()
+
+
+
+df_us['increase'] = df_us["cases"].diff()
+df_us = df_us[df_us['date'] != '2020-09-29']
+df_us = df_us.drop(columns = ["cases","deaths"])
+
+
+
+new_df.to_csv("us_states_cases.csv", index = False)
+df_us.to_csv("us_cases.csv",index=False)
 
 
