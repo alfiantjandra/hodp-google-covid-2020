@@ -16,7 +16,7 @@ colnames = ["keywords"]
 
 """ list of keywords ( max. 5) """
 df2 = ['coronavirus']
-
+keywords = ["loss of taste", "covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing"]
 
 """ Creating dictionary of us code. Some regions aren't included """
 xd = list(pycountry.subdivisions.get(country_code='US'))

@@ -7,6 +7,7 @@ Created on Wed Dec 30 16:14:21 2020
 """
 import pandas as pd
 import numpy as np
+import os
 
 ''' Converter Dictionary '''
 us_state_abbrev = {
@@ -68,18 +69,19 @@ us_state_abbrev = {
 'Wyoming': 'WY'
 }
 
+us_state_values = list(us_state_abbrev.values())
 
 
-df_us = pd.read_csv("nyt_us.csv")
-df = pd.read_csv("nyt_us_states.csv")
+df = pd.read_csv("../covid_data/us_states_total.csv")
+df_us = pd.read_csv("../covid_data/us_total.csv")
 
 ''' Taking dates subset '''
 df['date'] = pd.to_datetime(df['date'])
-mask = (df['date'] > '2020-09-29') & (df['date'] <= '2020-12-28')
+mask = (df['date'] >= '2020-09-29') & (df['date'] <= '2020-12-28')
 df = df.loc[mask]
 
 df_us['date'] = pd.to_datetime(df_us['date'])
-mask_us = (df_us['date'] > '2020-09-29') & (df_us['date'] <= '2020-12-28')
+mask_us = (df_us['date'] >= '2020-09-29') & (df_us['date'] <= '2020-12-28')
 df_us = df_us.loc[mask_us]
 
 
@@ -89,8 +91,22 @@ states = list(set(df['state']))
 df['state'].replace(us_state_abbrev,inplace=True)
 df = df.drop(columns = ['fips'])
 
+'''asfasdf'''
+new_df = pd.DataFrame()
+for state in us_state_values:
+    temp_df = df[df['state'] == state]
+    temp_df.index = pd.to_datetime(temp_df['date'])
 
-df.to_csv("us_states_cases.csv", index = False)
-df_us.to_csv("us_cases.csv",index=False)
+    temp_df = temp_df.rename(columns = {"cases": state})
+    temp_df = temp_df.drop(columns= ['date','state','deaths'])
+    
+    
+    new_df = pd.concat([new_df,temp_df],axis=1)
+    
+    
+
+
+# df.to_csv("us_states_cases.csv", index = False)
+# df_us.to_csv("us_cases.csv",index=False)
 
 
