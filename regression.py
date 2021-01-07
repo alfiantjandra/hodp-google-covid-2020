@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import linalg as LA
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -54,27 +55,39 @@ states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
           "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
           "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
           "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]  # include territories such as PR?
+# NJ, PA, MD best states, MT, IA, WI, SD worst
 
 MAX_DAY = 14
+
+best_states_L1 = {}
+best_states_L2 = {}
+worst_states_L1 = {}
+worst_states_L2 = {}
 
 for word in keywords:
     points = []
     for i in range(MAX_DAY + 1):  # positive i means RSV from i days earlier is compared with current cases
         new_df = df_shifted(df, 'cases', lag=i)
-        points.append((i, new_df.corr().loc['cases', word]))
+        points.append(new_df.corr().loc['cases', word])
 
     plt.figure(figsize=(6, 3))
-    plt.plot(*zip(*points), color='r')
+    plt.plot(np.arange(MAX_DAY + 1), points, color='r')
     plt.ylabel("Correlation")
     plt.xlabel("Lag/Lead")
     # plt.yticks(np.arange(0.25, 1.01, step=0.25))  # perhaps use consistent ticks
     # plt.ylim(0, 1)
-    x, y = zip(*points)
-    plt.title(f"{word.title()}, max: {max(y):.3f}, argmax: {np.argmax(y)}")
+    plt.title(f"{word.title()}, max: {max(points):.3f}, argmax: {np.argmax(points)}")
+
     for state in states:
-        points = []
+        state_points = []
         for i in range(MAX_DAY + 1):
             new_df = df_shifted(state_df.loc[:, [state, word]], state, lag=i)
-            points.append((i, new_df.corr().loc[state, word]))
-        plt.plot(*zip(*points), color='grey', alpha=0.3)
+            state_points.append(new_df.corr().loc[state, word])
+        best_states_L1[state] = LA.norm(np.array(points) - np.array(state_points), 1)
+        best_states_L2[state] = LA.norm(np.array(points) - np.array(state_points), 2)
+        worst_states_L1[state] = LA.norm(state_points, 1)
+        worst_states_L2[state] = LA.norm(state_points, 2)
+        plt.plot(np.arange(MAX_DAY + 1), state_points, color='grey', alpha=0.3)
+    d = {k: v for k, v in sorted(best_states_L2.items(), key=lambda item: item[1])}
+    print(d)
     plt.show()
