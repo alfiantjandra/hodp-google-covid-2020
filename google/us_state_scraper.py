@@ -14,47 +14,73 @@ import time
 pytrend = TrendReq(hl='en-GB', tz=360)
 colnames = ["keywords"]
 
-""" list of keywords ( max. 5) """
-df2 = ['coronavirus']
-keywords = ["loss of taste", "covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing"]
+""" list of keywords  """
+
+words = ["loss of taste", "covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing"]
 
 """ Creating dictionary of us code. Some regions aren't included """
-xd = list(pycountry.subdivisions.get(country_code='US'))
+temp = list(pycountry.subdivisions.get(country_code='US'))
 list_subdivision = []
-for i in range(len(xd)):
-    list_subdivision.append(xd[i].code)
+for i in range(len(temp)):
+    list_subdivision.append(temp[i].code)
 
 outlying_area = ['US-PR','US-GU','US-AS','US-MP','US-VI','US-UM']
 for x in outlying_area:
     list_subdivision.remove(x)
 
 
+
 ''' Scrape data and format into a single dataset; output: final_result '''
-for y in list_subdivision:
+# for state in list_subdivision:
+#     dataset = []
+#     for x in range(0,len(words)):
+#           keywords = [words[x]]
+#           pytrend.build_payload(
+#           kw_list=keywords,
+#           cat=0,
+#           timeframe='2020-09-30 2020-12-28',
+#           geo=state)
+#           data = pytrend.interest_over_time()
+#           if not data.empty:
+#               data = data.drop(labels=['isPartial'],axis='columns')
+#               dataset.append(data)
+    
+
+#     result = pd.concat(dataset, axis=1)
+#     # result.columns = [y[3]+y[4]]
+#     if list_subdivision.index(state) == 0:
+#         final_result = result
+#     else:
+#         final_result = pd.concat([final_result,result],axis=1)
+#     time.sleep(1)
+
+
+# final_result = final_result.div(100)
+# final_result.to_csv("1state_coronavirus.csv")
+              
+
+for x in range(0,len(words)):
     dataset = []
-    for x in range(0,len(df2)):
-          keywords = [df2[x]]
+    for state in list_subdivision:
+          
+          keywords = [words[x]]
           pytrend.build_payload(
           kw_list=keywords,
           cat=0,
-          timeframe='today 3-m',
-          geo=y)
+          timeframe='2020-09-30 2020-12-28',
+          geo=state)
           data = pytrend.interest_over_time()
+
           if not data.empty:
-              data = data.drop(labels=['isPartial'],axis='columns')
-              dataset.append(data)
-    
-
-    result = pd.concat(dataset, axis=1)
-    result.columns = [y[3]+y[4]]
-    if list_subdivision.index(y) == 0:
-        final_result = result
-    else:
-        final_result = pd.concat([final_result,result],axis=1)
-    time.sleep(1)
-
-
-final_result = final_result.div(100)
-final_result.to_csv("state_coronavirus.csv")
               
-
+              data = data.drop(labels=['isPartial'],axis='columns')
+              data.columns = [state[3]+state[4]]
+              dataset.append(data)
+          time.sleep(2)
+          
+    result = pd.concat(dataset,axis =1)
+    print(result)
+    result = result.div(100)
+    word = words[x]
+    result.to_csv(f"state {word}.csv")     
+          
