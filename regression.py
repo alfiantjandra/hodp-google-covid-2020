@@ -7,6 +7,7 @@ import seaborn as sns
 df = pd.read_csv("covid_data/us_increase.csv")
 state_df = pd.read_csv("covid_data/us_states_increase.csv")
 
+
 df['date'] = pd.to_datetime(df['date'])
 mask = (df['date'] > '2020-09-29') & (df['date'] <= '2020-12-28')
 df = df.loc[mask]
@@ -18,10 +19,12 @@ state_df['date'] = pd.to_datetime(state_df['date'])
 state_df = state_df.loc[state_mask]
 state_df.set_index('date', inplace=True)
 
+
 keywords = ["loss of taste", "covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing"]
 
 for word in keywords:
     df_rsv = pd.read_csv(f"US_google_trends/{word}.csv", index_col="date")
+    df_rsv.index = pd.to_datetime(df_rsv.index)
     df = pd.concat([df, df_rsv], axis=1)
     state_df = pd.concat([state_df, df_rsv], axis=1)
     plt.figure(figsize=(10, 7.5))
@@ -31,8 +34,8 @@ for word in keywords:
     plt.ylim(0, 310)
     plt.yticks(np.arange(50, 301, step=50))
     plt.text(0.95, 285, f"R = {df.corr().loc['cases', word]:.2f}", fontsize=18,
-             bbox={'facecolor': 'white', 'alpha': 0.5, 'pad': 10},
-             horizontalalignment='right')
+              bbox={'facecolor': 'white', 'alpha': 0.5, 'pad': 10},
+              horizontalalignment='right')
     plt.show()
 
 print(df.corr())
