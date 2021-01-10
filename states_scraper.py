@@ -24,7 +24,7 @@ list_subdivision = []
 for i in range(len(xd)):
     list_subdivision.append(xd[i].code)
 
-outlying_area = ['US-PR','US-GU','US-AS','US-MP','US-VI','US-UM']
+outlying_area = ['US-PR','US-GU','US-AS','US-MP','US-VI','US-UM','US-AK']
 for x in outlying_area:
     list_subdivision.remove(x)
 
