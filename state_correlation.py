@@ -7,9 +7,6 @@ Created on Sun Jan  3 17:52:46 2021
 """
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pycountry
 
 
 
@@ -23,12 +20,10 @@ df.columns = [state + " cases" for state in df.columns]
 
 
 keywords = ["loss of taste", "covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing"]
-final_result = pd.DataFrame()
 data = []
 column = ['keyword']
 column.extend(us_states)
 for word in keywords:
-    
     df_state = pd.read_csv(f"google/state {word}.csv", index_col = "date")
     df_state.index = pd.to_datetime(df_state.index)
     result = []
