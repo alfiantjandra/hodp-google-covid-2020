@@ -2,23 +2,28 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 
-d = {"states": ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "GU",
-          "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-          "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-          "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "PR", "RI", "SC",
-          "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"], "r-value": np.random.rand(53)}
+df = pd.read_csv("state_correlation.csv")
+df.set_index("keyword", inplace=True)
+df.drop(columns=["Unnamed: 0"], axis=1, inplace=True)
+df = df.T
+df.index.names = ['states']
+df.reset_index(inplace=True)
 
-state_df = pd.DataFrame(data=d)
+for keyword in df.columns:
+    if keyword != "states":
+        state_df = df[["states", keyword]]
 
-fig = px.choropleth(state_df,  # Input pandas DataFrame
-                    locations="states",  # DataFrame column with locations
-                    color="r-value",  # DataFrame column with values
-                    color_continuous_scale=['#F1D3CF', '#760000'],
-                    # hover_name="states",
-                    hover_data={"states": False, "r-value": True},
-                    locationmode="USA-states")
+        state_df = state_df.rename(columns={keyword: "R-value"})
 
-fig.update_layout(title_text="R-values by State",
-                  geo_scope="usa")
+        fig = px.choropleth(state_df,  # Input pandas DataFrame
+                            locations="states",  # DataFrame column with locations
+                            color="R-value",  # DataFrame column with values
+                            color_continuous_scale=['#F1D3CF', '#760000'],
+                            # hover_name="states",
+                            hover_data={"states": False, "R-value": True},
+                            locationmode="USA-states")
 
-fig.show()
+        fig.update_layout(title_text=f'Correlation by state - keyword "{keyword}"',
+                          geo_scope="usa")
+
+        fig.show()

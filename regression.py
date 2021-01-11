@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # plotting total cases/deaths in the US
-
+#
 # total_df = pd.read_csv("covid_data/us_total.csv")
 # total_df['date'] = pd.to_datetime(total_df['date'])
 # total_df.set_index('date', inplace=True)
@@ -39,6 +39,8 @@ for word in keywords:
     plt.figure(figsize=(10, 7.5))
     ax = sns.regplot(x=word, y="cases", data=df, color='#C63F3F', scatter_kws={'s': 12})  # ci=None
     ax.set(xlabel=f"{word} RSV", ylabel="Increase in cases (thousands)")
+    ax.xaxis.label.set_size(16)
+    ax.yaxis.label.set_size(16)
     plt.ylim(0, 310)
     plt.yticks(np.arange(50, 301, step=50))
     plt.text(0.95, 285, f"R = {df.corr().loc['cases', word]:.2f}", fontsize=18,
