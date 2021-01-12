@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib.ticker import MultipleLocator
 from numpy import linalg as LA
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -28,7 +29,7 @@ state_df = state_df.loc[state_mask]
 state_df.set_index('date', inplace=True)
 
 
-keywords = ["loss of taste", "covid symptoms", "loss of smell", "face mask", "coronavirus vaccine", "covid testing"]
+keywords = ["covid symptoms", "loss of smell", "coronavirus vaccine", "covid testing"]
 
 # plotting scatterplot/linear regression for each keyword
 for word in keywords:
@@ -36,20 +37,19 @@ for word in keywords:
     df_rsv.index = pd.to_datetime(df_rsv.index)
     df = pd.concat([df, df_rsv], axis=1)
     state_df = pd.concat([state_df, df_rsv], axis=1)
-    plt.figure(figsize=(10, 7.5))
-    ax = sns.regplot(x=word, y="cases", data=df, color='#C63F3F', scatter_kws={'s': 12})  # ci=None
-    ax.set(xlabel=f"{word} RSV", ylabel="Increase in cases (thousands)")
-    ax.xaxis.label.set_size(16)
-    ax.yaxis.label.set_size(16)
-    plt.ylim(0, 310)
-    plt.yticks(np.arange(50, 301, step=50))
-    plt.text(0.95, 285, f"R = {df.corr().loc['cases', word]:.2f}", fontsize=18,
-              bbox={'facecolor': 'white', 'alpha': 0.5, 'pad': 10},
-              horizontalalignment='right')
-    plt.show()
+    # plt.figure(figsize=(10, 7.5))
+    # ax = sns.regplot(x=word, y="cases", data=df, color='#C63F3F', scatter_kws={'s': 12})  # ci=None
+    # ax.set(xlabel=f"{word} RSV", ylabel="Increase in cases (thousands)")
+    # ax.xaxis.label.set_size(16)
+    # ax.yaxis.label.set_size(16)
+    # plt.ylim(0, 310)
+    # plt.yticks(np.arange(50, 301, step=50))
+    # plt.text(0.95, 285, f"R = {df.corr().loc['cases', word]:.2f}", fontsize=18,
+    #           bbox={'facecolor': 'white', 'alpha': 0.5, 'pad': 10},
+    #           horizontalalignment='right')
+    # plt.show()
 
 print(df.corr())
-
 
 def df_shifted(df, target=None, lag=0):
     if not lag and not target:
@@ -68,10 +68,12 @@ states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
           "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
           "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
           "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]  # include territories such as PR?
-# NJ, PA, MD best states, MT, IA, WI, SD worst
+states = ["WV", "PA", "MD"]
+# WV, PA, MD best states, MT, IA, WI, SD worst
 
-MAX_DAY = 14
+MAX_DAY = 28
 
+best_avg = {}
 best_states_L1 = {}
 best_states_L2 = {}
 worst_states_L1 = {}
@@ -83,13 +85,14 @@ for word in keywords:
         new_df = df_shifted(df, 'cases', lag=i)
         points.append(new_df.corr().loc['cases', word])
 
-    plt.figure(figsize=(6, 3))
+    plt.figure(figsize=(10, 5))
     plt.plot(np.arange(MAX_DAY + 1), points, color='r')
-    plt.ylabel("Correlation")
-    plt.xlabel("Lag/Lead")
+    plt.ylabel("Correlation", size=16)
+    plt.xlabel("Shift", size=16)
+    plt.xticks(np.arange(0, 29, 7))
     # plt.yticks(np.arange(0.25, 1.01, step=0.25))  # perhaps use consistent ticks
     # plt.ylim(0, 1)
-    plt.title(f"{word.title()}, max: {max(points):.3f}, argmax: {np.argmax(points)}")
+    plt.title(f'{word.title()}', size=16)
 
     for state in states:
         state_points = []
