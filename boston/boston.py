@@ -83,20 +83,18 @@ def df_shifted(df, target=None, lag=0):
 
 keywords = ["covid symptoms", "loss of smell", "coronavirus vaccine", "covid testing"]
 MAX_DAY = 14
-data = []
-column = ['word']
-for i in range(MAX_DAY+1):
-    column.append(str(i))
-print(column)
+
 for word in keywords:
     points = []
-    for i in range(MAX_DAY + 1):  # positive i means RSV from i days earlier is compared with current cases
+    for i in range(2* MAX_DAY + 1):  # positive i means RSV from i days earlier is compared with current cases
         new_df = df_shifted(df, 'new cases', lag=i)
         points.append(new_df.corr().loc['new cases', word])
+    
+    plt.figure(figsize=(10,5))
+    plt.plot(np.arange(2* MAX_DAY + 1), points, color='r',label=word)  
+    plt.ylabel("Correlation", size=16)
+    plt.xlabel("Shift", size=16)
+    plt.xticks(np.arange(0, 29, 7))
+    plt.title(f"{word.title()}",size=16)
+    plt.show()
 
-    plt.plot(np.arange( MAX_DAY + 1), points, color='#C63F3F',label=word)   
-    points.insert(0,word)
-
-    data.append(points)
-plt.legend()    
-plt.show()
